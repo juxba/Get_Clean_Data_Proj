@@ -67,11 +67,13 @@ for(i in 1:length(Ds2)){
     M <- d2[o, ]
     for(j in 1:30){
         m <- NULL
-        for(k in 4:ncol(d2))
+        for(k in 4:ncol(M))
             m <- c(m, mean(M[M[1] == j, k], na.rm = TRUE))
         Res <- rbind(Res, m)
+        colnames(Res) <- names(D1)[4:ncol(D1)]
     }
 }
+
 #
-write.csv(Res, "result.csv")
+#write.csv(Res, "result.csv")
 #

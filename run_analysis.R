@@ -58,18 +58,18 @@ D1 <- data.frame()  # D1 is the 10299x68 dataset1
 #
 # Dat[, selcol] is a subset of columns with "mean()" or "std()" in their names.
 # Append Subject column
-dat <- cbind(as.data.frame(Subject), Dat[, selcol])
+Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
 # Append Measurement column
-dat <- cbind(as.data.frame(Measurement), dat)
+Dat <- cbind(as.data.frame(Measurement), Dat)
 #
 # Split by Measurement
-dat <- split(dat, Measurement)
+dat <- split(Dat, Measurement)
 #
 # Programmatly access to the list dat
 for(measurement in 1:length(dat)){
     d <- dat[[measurement]]
-    o <- order(d[2]) # order by Subject this Measurement
-    d <- d[o, ]
+#    o <- order(d[2]) # order by Subject this Measurement
+    d <- d[order(d[2]), ]
     D1 <- rbind(D1, d) # feeding up D1 with subsets of Measurement ordered by Subject.  
     for(subject in 1:30){ # for each Subject in this Measurement calculate colMeans.
         m <- colMeans(d[d[2] == subject, 3:ncol(d)])
@@ -77,8 +77,15 @@ for(measurement in 1:length(dat)){
         D2 <- rbind(D2, m) # feed up the matrix D2 with a new row
     }
 }
+# Assign names to columns and rows of D2
+# Columns
 colnames(D2) <- colnames(D1)[3:ncol(D1)]
-rownames(D2) <- NULL
+# Rows
+rnames <- NULL
+for(level in levels(Measurement))
+    for(subject in 1:30)
+        rnames <- c(rnames, paste(level, ".S_", subject, sep=""))
+rownames(D2) <- rnames
 #
 write.table(D2, "D2_dataset.txt", sep =" ")
 #

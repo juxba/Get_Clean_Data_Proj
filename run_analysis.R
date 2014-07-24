@@ -53,12 +53,12 @@ Dat$Measurement <- Measurement
 measurements <- levels(Measurement)
 #
 # This two are the datasets to be delivered
-D2 <- NULL      # D2 is the resulting 180x66 matrix
-                # of average for each activity and each subject. 
-D1 <- data.frame()  # D1 is the 10299x68 dataset1
-                    # partitioned by Measurement and each ordered by Subject.
-#
-# Create a subset of Dat called dat
+D2 <- NULL 
+# D2 is the resulting 180x66 matrix
+# of average for each activity and each subject. 
+D1 <- data.frame()
+# D1 is the 10299x68 dataset1
+# partitioned by Measurement and each ordered by Subject.
 #
 # Append Subject column
 # selcol is the index of columns with "mean()" or "std()" in their names.
@@ -70,7 +70,9 @@ Dat <- cbind(as.data.frame(Measurement), Dat)
 dat <- split(Dat, Measurement)
 #
 # Programmatly access to the list dat
-for(measurement in 1:length(dat)){
+rname <- NULL
+#for(measurement in 1:length(dat)){
+for(measurement in measurements){
     D <- dat[[measurement]]
     D <- D[order(D[2]), ]  # order by Subject this Measurement
     D1 <- rbind(D1, D) # feeding up D1 with subsets of Measurement ordered by Subject.  
@@ -78,21 +80,17 @@ for(measurement in 1:length(dat)){
         tmp <- colMeans(D[D[2] == subject, 3:ncol(D)])
         names(tmp) <- NULL  ## !! important
         D2 <- rbind(D2, tmp) # feed up the matrix D2 with a new row
-    }
+        # Collect row names
+        rname <- c(rname, 
+                   paste(measurement, # ex. produces "WALKING_UPSTAIRS.S_04"
+                         ifelse(subject < 10, ".S_0", ".S_"),
+                         subject,
+                         sep=""))
+    }    
 }
 # Assign names to columns and rows of D2
-# Columns
 colnames(D2) <- colnames(D1)[3:ncol(D1)]
-# Rows
-rnames <- NULL 
-for(measurement in measurements)
-    for(subject in subjects)
-        rnames <- c(rnames,
-                    paste(measurement,
-                          ifelse(subject < 10, ".S_0", ".S_"),
-                          subject,
-                          sep=""))
-rownames(D2) <- rnames
+rownames(D2) <- rname
 #
 write.table(D2, "D2_dataset.txt", sep =" ")
 #

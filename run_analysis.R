@@ -51,7 +51,7 @@ levels(Measurement) <- scan(paste(dir, "/activity_labels.txt", sep=""),
 Dat$Measurement <- Measurement
 measurements <- levels(Measurement)
 #
-# This two are the datasets to be delivered
+# These two are the datasets to be delivered
 D2 <- NULL 
 # D2 is the resulting 180x66 matrix
 # of average for each activity and each subject. 

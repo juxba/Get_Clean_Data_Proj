@@ -85,12 +85,13 @@ for(measurement in 1:length(dat)){
 colnames(D2) <- colnames(D1)[3:ncol(D1)]
 # Rows
 rnames <- NULL 
-for(measurement in levels(Measurement)){
-    for(subject in subjects){
-        s <- ifelse(subject < 10, ".S_0", ".S_")
-        rnames <- c(rnames, paste(measurement, s, subject, sep=""))
-    }
-}
+for(measurement in measurements)
+    for(subject in subjects)
+        rnames <- c(rnames,
+                    paste(measurement,
+                          ifelse(subject < 10, ".S_0", ".S_"),
+                          subject,
+                          sep=""))
 rownames(D2) <- rnames
 #
 write.table(D2, "D2_dataset.txt", sep =" ")

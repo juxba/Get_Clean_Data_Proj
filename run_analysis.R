@@ -39,7 +39,6 @@ names(Dat) <- sapply(features,
                          s
                      })
 # Add two fixed variables columns: Subject and Measurement
-# "Fixed variables come first"
 Subject <- as.integer(c(scan(paste(dir, "/train/subject_train.txt", sep="")),
                         scan(paste(dir, "/test/subject_test.txt", sep=""))))
 Dat$Subject <- Subject
@@ -62,6 +61,7 @@ D1 <- data.frame()
 #
 # Append Subject column
 # selcol is the index of columns with "mean()" or "std()" in their names.
+# "Fixed variables come first"
 Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
 # Append Measurement column
 Dat <- cbind(as.data.frame(Measurement), Dat)
@@ -69,9 +69,8 @@ Dat <- cbind(as.data.frame(Measurement), Dat)
 # Split by Measurement
 dat <- split(Dat, Measurement)
 #
-# Programmatly access to the list dat
-rname <- NULL
-#for(measurement in 1:length(dat)){
+# Programmatly access to the list of data.frames dat
+rnames <- NULL # row names
 for(measurement in measurements){
     D <- dat[[measurement]]
     D <- D[order(D[2]), ]  # order by Subject this Measurement
@@ -81,16 +80,16 @@ for(measurement in measurements){
         names(tmp) <- NULL  ## !! important
         D2 <- rbind(D2, tmp) # feed up the matrix D2 with a new row
         # Collect row names
-        rname <- c(rname, 
-                   paste(measurement, # ex. produces "WALKING_UPSTAIRS.S_04"
-                         ifelse(subject < 10, ".S_0", ".S_"),
-                         subject,
-                         sep=""))
+        rnames <- c(rnames, 
+                    paste(measurement, # ex. produces "WALKING_UPSTAIRS.S_04"
+                          ifelse(subject < 10, ".S_0", ".S_"),
+                          subject,
+                          sep=""))
     }    
 }
 # Assign names to columns and rows of D2
 colnames(D2) <- colnames(D1)[3:ncol(D1)]
-rownames(D2) <- rname
+rownames(D2) <- rnames
 #
 write.table(D2, "D2_dataset.txt", sep =" ")
 #

@@ -73,5 +73,5 @@ for(i in 1:length(Dat1)){
 colnames(D2) <- colnames(D1)[3:ncol(D1)]
 rownames(D2) <- NULL
 #
-write.csv(D2, "D2.csv")
+write.table(D2, "D2_dataset.txt", sep =" ")
 #

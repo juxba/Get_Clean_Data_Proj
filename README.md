@@ -1,13 +1,15 @@
-## Getting and Cleaning Data. Course Project.
+## Getting and Cleaning Data.
+## Course Project.
 
 ## Introduction
 
-This project delivers a tidy data set given, as project's input, the data collected from the accelerometers from the Samsung Galaxy S smartphone.
+This project delivers a tidy data set given the data collected from the accelerometers from the Samsung Galaxy S smartphone.
 
 A full description is available at the site where the data was obtained: 
 http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
-The steps that the script performs for the creation of the data set required is described here.
+## Description of the script
+The steps that the script performs for the creation of the data set required are described here.
 
 ### Check that the file system of the input data is in place.
 
@@ -25,26 +27,31 @@ if (!file.exists(paste(dir, "UCI HAR Dataset", sep=""))) {
 }
 ```
 
-### Read the input data into a table.
+### Read input data into a table.
 
 ```
 dir <- paste(dir, "UCI HAR Dataset", sep="")
 #
 Dat <- rbind(read.table(paste(dir, "/train/X_train.txt", sep=""), colClasses="numeric"),
              read.table(paste(dir, "/test/X_test.txt", sep=""), colClasses="numeric"))
-#
 ```
 #### Choose up features
-We are interested in those with "mean()" or "std()" in their names.
+
+features are variables names of the data set Dat.
+
 ```
 features <- scan(paste(dir, "/features.txt", sep=""), what="character")[c(FALSE, TRUE)]
+```
 
+#### We are interested in those with "mean()" or "std()" in their names.
+
+```
 selcol <- grep("(mean|std)\\(\\)", features)
 
 ```
 #### Convert features names to valid R names
 
-make.names {base} can do it, but this is costumized.
+make.names {base} can do it, but this is customized.
 ```
 names(Dat) <- sapply(features,
                      function(s){
@@ -57,69 +64,104 @@ names(Dat) <- sapply(features,
                      })
 ```
 
-#### Add two fixed variables columns: Subject and Measurement
+#### Read two fixed variables: Subject and Measurement
+"Fixed variables come first"
+
+#### Add Subject
+
 ```
 Subject <- as.integer(c(scan(paste(dir, "/train/subject_train.txt", sep="")),
                         scan(paste(dir, "/test/subject_test.txt", sep=""))))
 Dat$Subject <- Subject
 subjects <- 1:30
-#
+
+selcol is the index of columns with "mean()" or "std()" in their names.
+
+Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
+```
+#### Add Measurement
+
+```
 Measurement <- factor(c(scan(paste(dir, "/train/y_train.txt", sep="")),
                         scan(paste(dir, "/test/y_test.txt", sep=""))))
 levels(Measurement) <- scan(paste(dir, "/activity_labels.txt", sep=""),
                             what="character")[c(FALSE, TRUE)]
 Dat$Measurement <- Measurement
 measurements <- levels(Measurement)
-```
 
-#### Append Subject column
-
-selcol is the index of columns with "mean()" or "std()" in their names.
-"Fixed variables come first"
-
-```
-Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
-```
-
-#### Append Measurement column
-
-```
 Dat <- cbind(as.data.frame(Measurement), Dat)
 ```
-### These two are the datasets to be delivered.
 
-#### D2 is the resulting 180x66 matrix of average for each activity and each subject.
+### Data sets to be created.
 
-```
-D2 <- NULL 
-```
-#### D1 is the 10299x68 dataset partitioned by Measurement and each ordered by Subject.
+D1 is the 10299x68 data set partitioned by Measurement and each ordered by Subject.
 
 ```
 D1 <- data.frame()
 ```
 
+D2 is the resulting 180x66 matrix of average for each activity and each subject.
+
+```
+D2 <- NULL 
+```
+
 ### Split by Measurement
+
+Observe that ordering like this
+```
+Dat[order(c(Dat$Measurement, Dat$Subject)), ]
+```
+then the job can be done without splitting but sub setting
+```
+colMeans(Dat[Dat[1] == measurement & Dat[2] == subject, 3:ncol(Dat)], na.rm = T)
+```
+would be costly in time.
+
+Let's split
 
 ```
 dat <- split(Dat, Measurement)
 ```
 
-### Programmatly access to the list of data.frames dat
+
+### Looping dat, the list of Measurement dataframes.
+
+In each dataframe all rows of the Measurement column has the same value.
 
 ```
-rnames <- NULL # row names
 for(measurement in measurements){
     D <- dat[[measurement]]
     D <- D[order(D[2]), ]  # order by Subject this Measurement
-    D1 <- rbind(D1, D) # feeding up D1 with subsets of Measurement ordered by Subject.  
-    for(subject in subjects){ # for each Subject in this Measurement calculate colMeans.
+```
+feeding up D1 with subsets of Measurement ordered by Subject.
+```
+    D1 <- rbind(D1, D) 
+```
+
+for each Subject in this Measurement calculate colMeans.
+
+```
+    for(subject in subjects){ 
         tmp <- colMeans(D[D[2] == subject, 3:ncol(D)])
         names(tmp) <- NULL  ## !! important
-        D2 <- rbind(D2, tmp) # feed up the matrix D2 with a new row
-        # Collect row names
+```
+
+feed up the matrix D2 with a new row
+
+```
+        D2 <- rbind(D2, tmp) 
+```
+
+#### Row names
+
+rnames contains row names of D2, the resulting data set.
+
+Names are like this "WALKING_UPSTAIRS.S_04".
+
+```
         rnames <- c(rnames, 
-                    paste(measurement, # ex. produces "WALKING_UPSTAIRS.S_04"
+                    paste(measurement, 
                           ifelse(subject < 10, ".S_0", ".S_"),
                           subject,
                           sep=""))

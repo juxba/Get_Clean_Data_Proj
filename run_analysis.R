@@ -51,14 +51,6 @@ levels(Measurement) <- scan(paste(dir, "/activity_labels.txt", sep=""),
 Dat$Measurement <- Measurement
 measurements <- levels(Measurement)
 #
-# These two are the datasets to be delivered
-D2 <- NULL 
-# D2 is the resulting 180x66 matrix
-# of average for each activity and each subject. 
-D1 <- data.frame()
-# D1 is the 10299x68 dataset1
-# partitioned by Measurement and each ordered by Subject.
-#
 # Append Subject column
 # selcol is the index of columns with "mean()" or "std()" in their names.
 # "Fixed variables come first"
@@ -68,6 +60,14 @@ Dat <- cbind(as.data.frame(Measurement), Dat)
 #
 # Split by Measurement
 dat <- split(Dat, Measurement)
+#
+# These two are the datasets to be delivered
+D2 <- NULL 
+# D2 is the resulting 180x66 matrix
+# of average for each activity and each subject. 
+D1 <- data.frame()
+# D1 is the 10299x68 dataset1
+# partitioned by Measurement and each ordered by Subject.
 #
 # Programmaticly access to the list of data.frames dat
 rnames <- NULL # row names

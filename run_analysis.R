@@ -69,7 +69,7 @@ Dat <- cbind(as.data.frame(Measurement), Dat)
 # Split by Measurement
 dat <- split(Dat, Measurement)
 #
-# Programmatly access to the list of data.frames dat
+# Programmaticly access to the list of data.frames dat
 rnames <- NULL # row names
 for(measurement in measurements){
     D <- dat[[measurement]]

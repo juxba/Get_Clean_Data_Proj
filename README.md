@@ -139,7 +139,7 @@ Observe that ordering like this
 ```
 Dat[order(c(Dat$Measurement, Dat$Subject)), ]
 ```
-then the job can be done without splitting but sub setting
+then the job can be done without splitting but subsetting
 ```
 colMeans(Dat[Dat[1] == measurement & Dat[2] == subject, 3:ncol(Dat)], na.rm = T)
 ```

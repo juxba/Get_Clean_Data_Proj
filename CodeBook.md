@@ -229,6 +229,13 @@ The two tidy data sets are ready for delivery.
 
 D1 is a data.frame and D2 is a matrix.
 
+The produced data sets are tidy because:
+
+1. Each variable forms a colummn
+2. Each observation forms a row
+3. Each type of observational unit forms a table.
+
+
 This will be send to Coursera
 
 ```

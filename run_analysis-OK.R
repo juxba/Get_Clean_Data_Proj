@@ -49,7 +49,7 @@ levels(Measurement) <- scan(paste(dir, "/activity_labels.txt", sep=""),
                             what="character")[c(FALSE, TRUE)]
 #
 # Res is the resulting data set
-Res <- aggregate(Dat[, 1:ncol(Dat)], list(interaction(Subject, Measurement)), mean)[-1]
+Res <- aggregate(Dat[, 1:ncol(Dat)], list(interaction(Subject, Measurement)), mean)
 tmp <- Res[, 1]
 Res[1] <- NULL
 rownames(Res) <- tmp

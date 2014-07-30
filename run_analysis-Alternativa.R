@@ -55,9 +55,10 @@ measurements <- levels(Measurement)
 # Append Subject column
 # selcol is the index of columns with "mean()" or "std()" in their names.
 # "Fixed variables come first"
-Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
+# Dat <- cbind(as.data.frame(Subject), Dat[, selcol])
+Dat <- cbind(Subject, Dat[, selcol])
 # Append Measurement column
-Dat <- cbind(as.data.frame(Measurement), Dat)
+Dat <- cbind(Measurement, Dat)
 #
 # Split by Measurement
 dat <- split(Dat, Measurement)
@@ -66,16 +67,14 @@ dat <- split(Dat, Measurement)
 D2 <- NULL 
 # D2 is the resulting 180x66 matrix
 # of average for each activity and each subject. 
-# D1 <- data.frame()
-# D1 is the 10299x68 dataset1
-# partitioned by Measurement and each ordered by Subject.
 #
-rnames <- NULL # row names
 x <- lapply(dat, function(y) sapply(y[3:ncol(y)], function(z) tapply(z, y$Subject, mean)))
 for(i in 1:length(x)){
     names(x[[i]]) <- NULL
     D2 <- rbind(D2, x[[i]])
 }
+#
+rnames <- NULL # row names
 for(measurement in measurements){
     for(subject in subjects){
         rnames <- c(rnames, 
@@ -85,6 +84,7 @@ for(measurement in measurements){
                           sep=""))
     }
 }
+#
 # Assign names to columns and rows of D2
 colnames(D2) <- colnames(Dat)[3:ncol(Dat)]
 rownames(D2) <- rnames

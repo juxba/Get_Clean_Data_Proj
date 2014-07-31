@@ -71,15 +71,11 @@ D2 <- NULL
 x <- lapply(dat,
             function(y) sapply(y[3:ncol(y)],
                                function(z) tapply(z, y$Subject, mean)))
-for(i in 1:length(x)){
-    colnames(x[[i]]) <- NULL
+for(i in 1:length(x))
     D2 <- rbind(D2, x[[i]])
-}
-# for(i in 1:length(x)){
-#     colnames(x[[i]]) <- NULL
-#     names(x[i]) <- NULL
-# }
-# D2 <- rbind(x)
+#
+# D2 <- rbind(x$WALKING, x$WALKING_UPSTAIRS, x$WALKING_DOWNSTAIRS,
+#             x$SITTING, x$STANDING, x$LAYING)
 #
 rnames <- NULL # row names
 for(measurement in measurements){

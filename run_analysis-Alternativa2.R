@@ -49,11 +49,11 @@ Measurement <- factor(c(scan(paste(dir, "/train/y_train.txt", sep="")),
 levels(Measurement) <- scan(paste(dir, "/activity_labels.txt", sep=""),
                             what="character")[c(FALSE, TRUE)]
 #
-# Res is the resulting data set
-D2 <- aggregate(Dat[1:ncol(Dat)], by = list(interaction(Subject, Measurement)), mean)
-tmp <- D2[, 1]
-D2[1] <- NULL
-rownames(D2) <- tmp
+# D2 is the resulting data set
+D2 <- aggregate(Dat, by = list(interaction(Subject, Measurement)), mean)
 #
-write.table(D2, "D2_dataset.txt", sep =" ")
+rownames(D2) <- D2[, 1]
+D2[1] <- NULL
+#
+# write.table(D2, "D2_dataset.txt", sep =" ")
 #

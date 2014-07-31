@@ -68,11 +68,18 @@ D2 <- NULL
 # D2 is the resulting 180x66 matrix
 # of average for each activity and each subject. 
 #
-x <- lapply(dat, function(y) sapply(y[3:ncol(y)], function(z) tapply(z, y$Subject, mean)))
+x <- lapply(dat,
+            function(y) sapply(y[3:ncol(y)],
+                               function(z) tapply(z, y$Subject, mean)))
 for(i in 1:length(x)){
-    names(x[[i]]) <- NULL
+    colnames(x[[i]]) <- NULL
     D2 <- rbind(D2, x[[i]])
 }
+# for(i in 1:length(x)){
+#     colnames(x[[i]]) <- NULL
+#     names(x[i]) <- NULL
+# }
+# D2 <- rbind(x)
 #
 rnames <- NULL # row names
 for(measurement in measurements){
@@ -85,9 +92,9 @@ for(measurement in measurements){
     }
 }
 #
-# Assign names to columns and rows of D2
-colnames(D2) <- colnames(Dat)[3:ncol(Dat)]
+# Assign names to rows and columns
 rownames(D2) <- rnames
+colnames(D2) <- colnames(Dat)[3:ncol(Dat)]
 #
-write.table(D2, "Res_dataset.txt", sep =" ")
+# write.table(D2, "D2_dataset.txt", sep =" ")
 #
